@@ -407,7 +407,6 @@ defmodule Commanded.Event.Handler do
 
   defp subscribe_to_all_streams(%Handler{} = state) do
     %Handler{
-      consistency: consistency,
       handler_name: handler_name,
       subscribe_from: subscribe_from
     } = state
@@ -497,7 +496,13 @@ defmodule Commanded.Event.Handler do
     %Handler{state | last_seen_event: event_number}
   end
 
-  defp ack_event(event, %Handler{consistency: consistency, handler_name: handler_name, subscription: subscription}) do
+  defp ack_event(event, %Handler{} = state) do
+    %Handler{
+      consistency: consistency,
+      handler_name: handler_name,
+      subscription: subscription
+    } = state
+
     :ok = EventStore.ack_event(subscription, event)
     :ok = Subscriptions.ack_event(handler_name, consistency, event)
   end
