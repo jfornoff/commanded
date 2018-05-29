@@ -3,7 +3,7 @@ defmodule Commanded.Event.InitHandler do
 
   def init do
     send(reply_to(), {:init, self()})
-    
+
     :ok
   end
 

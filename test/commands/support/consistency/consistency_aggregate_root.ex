@@ -2,11 +2,11 @@ defmodule Commanded.Commands.ConsistencyAggregateRoot do
   @moduledoc false
   defstruct [:delay]
 
-  defmodule ConsistencyCommand, do: defstruct [:uuid, :delay]
-  defmodule NoOpCommand, do: defstruct [:uuid]
-  defmodule RequestDispatchCommand, do: defstruct [:uuid, :delay]
-  defmodule ConsistencyEvent, do: defstruct [:uuid, :delay]
-  defmodule DispatchRequestedEvent, do: defstruct [:uuid, :delay]
+  defmodule(ConsistencyCommand, do: defstruct([:uuid, :delay]))
+  defmodule(NoOpCommand, do: defstruct([:uuid]))
+  defmodule(RequestDispatchCommand, do: defstruct([:uuid, :delay]))
+  defmodule(ConsistencyEvent, do: defstruct([:uuid, :delay]))
+  defmodule(DispatchRequestedEvent, do: defstruct([:uuid, :delay]))
 
   alias Commanded.Commands.ConsistencyAggregateRoot
 

@@ -3,12 +3,16 @@ defmodule Commanded.ProcessManagers.ErrorRouter do
   use Commanded.Commands.Router
 
   alias Commanded.ProcessManagers.ErrorAggregate
+
   alias Commanded.ProcessManagers.ErrorAggregate.Commands.{
     StartProcess,
     AttemptProcess,
-    ContinueProcess,
+    ContinueProcess
   }
 
-  dispatch [StartProcess,AttemptProcess,ContinueProcess],
-    to: ErrorAggregate, identity: :process_uuid
+  dispatch(
+    [StartProcess, AttemptProcess, ContinueProcess],
+    to: ErrorAggregate,
+    identity: :process_uuid
+  )
 end

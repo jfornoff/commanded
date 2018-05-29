@@ -5,5 +5,5 @@ defmodule Commanded.Commands.AggregateRouter do
   alias Commanded.Commands.AggregateRoot
   alias Commanded.Commands.AggregateRoot.Command
 
-  dispatch Command, to: AggregateRoot, identity: :uuid
+  dispatch(Command, to: AggregateRoot, identity: :uuid)
 end

@@ -40,7 +40,9 @@ defmodule Commanded.Event.HandlerInitTest do
       default_event_store_adapter = Application.get_env(:commanded, :event_store_adapter)
       :ok = Application.put_env(:commanded, :event_store_adapter, MockEventStore)
 
-      expect(MockEventStore, :subscribe_to_all_streams, fn _handler_name, handler, _subscribe_from ->
+      expect(MockEventStore, :subscribe_to_all_streams, fn _handler_name,
+                                                           handler,
+                                                           _subscribe_from ->
         {:ok, handler}
       end)
 

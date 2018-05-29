@@ -39,19 +39,17 @@ defmodule Commanded.Middleware.Pipeline do
 
   """
 
-  defstruct [
-    assigns: %{},
-    causation_id: nil,
-    correlation_id: nil,
-    command: nil,
-    command_uuid: nil,
-    consistency: nil,
-    halted: false,
-    identity: nil,
-    identity_prefix: nil,
-    metadata: nil,
-    response: nil,
-  ]
+  defstruct assigns: %{},
+            causation_id: nil,
+            correlation_id: nil,
+            command: nil,
+            command_uuid: nil,
+            consistency: nil,
+            halted: false,
+            identity: nil,
+            identity_prefix: nil,
+            metadata: nil,
+            response: nil
 
   alias Commanded.Middleware.Pipeline
 
@@ -59,8 +57,7 @@ defmodule Commanded.Middleware.Pipeline do
   Puts the `key` with value equal to `value` into `assigns` map.
   """
   def assign(%Pipeline{assigns: assigns} = pipeline, key, value)
-    when is_atom(key)
-  do
+      when is_atom(key) do
     %Pipeline{pipeline | assigns: Map.put(assigns, key, value)}
   end
 
@@ -96,6 +93,7 @@ defmodule Commanded.Middleware.Pipeline do
   def respond(%Pipeline{response: nil} = pipeline, response) do
     %Pipeline{pipeline | response: response}
   end
+
   def respond(%Pipeline{} = pipeline, _response), do: pipeline
 
   @doc """
@@ -105,6 +103,7 @@ defmodule Commanded.Middleware.Pipeline do
   def chain(%Pipeline{} = pipeline, _stage, []), do: pipeline
   def chain(%Pipeline{halted: true} = pipeline, :before_dispatch, _middleware), do: pipeline
   def chain(%Pipeline{halted: true} = pipeline, :after_dispatch, _middleware), do: pipeline
+
   def chain(%Pipeline{} = pipeline, stage, [module | modules]) do
     chain(apply(module, stage, [pipeline]), stage, modules)
   end

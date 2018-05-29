@@ -65,11 +65,12 @@ defmodule Commanded.Aggregates.AggregateLifespanTest do
       assert_receive {:DOWN, ^ref, :process, _, :normal}
     end
 
-    test "should adhere to aggregate lifespan when taking snapshot after receiving published event", %{
-      aggregate_uuid: aggregate_uuid,
-      pid: pid,
-      ref: ref
-    } do
+    test "should adhere to aggregate lifespan when taking snapshot after receiving published event",
+         %{
+           aggregate_uuid: aggregate_uuid,
+           pid: pid,
+           ref: ref
+         } do
       :ok = BankRouter.dispatch(%OpenAccount{account_number: aggregate_uuid, initial_balance: 10})
 
       events = aggregate_uuid |> EventStore.stream_forward() |> Enum.to_list()
@@ -85,11 +86,12 @@ defmodule Commanded.Aggregates.AggregateLifespanTest do
       assert {:ok, _snapshot} = EventStore.read_snapshot(aggregate_uuid)
     end
 
-    test "should adhere to aggregate lifespan when receiving published events after taking snapshot", %{
-      aggregate_uuid: aggregate_uuid,
-      pid: pid,
-      ref: ref
-    } do
+    test "should adhere to aggregate lifespan when receiving published events after taking snapshot",
+         %{
+           aggregate_uuid: aggregate_uuid,
+           pid: pid,
+           ref: ref
+         } do
       :ok = BankRouter.dispatch(%OpenAccount{account_number: aggregate_uuid, initial_balance: 10})
 
       events = aggregate_uuid |> EventStore.stream_forward() |> Enum.to_list()
@@ -108,27 +110,29 @@ defmodule Commanded.Aggregates.AggregateLifespanTest do
 
   describe "deprecated `after_command/1` callback" do
     test "should fail to compile when missing `after_event/1` function" do
-      assert_raise ArgumentError, "Aggregate lifespan `BankAccountLifespan` does not define a callback function: `after_event/1`", fn ->
-        Code.eval_string """
-          alias Commanded.ExampleDomain.BankAccount
-          alias Commanded.ExampleDomain.BankAccount.Commands.{OpenAccount, DepositMoney}
+      assert_raise ArgumentError,
+                   "Aggregate lifespan `BankAccountLifespan` does not define a callback function: `after_event/1`",
+                   fn ->
+                     Code.eval_string("""
+                       alias Commanded.ExampleDomain.BankAccount
+                       alias Commanded.ExampleDomain.BankAccount.Commands.{OpenAccount, DepositMoney}
 
-          defmodule BankAccountLifespan do
-            def after_command(%OpenAccount{}), do: 5
-            def after_command(%DepositMoney{}), do: 20
-            def after_command(_), do: :infinity
-          end
+                       defmodule BankAccountLifespan do
+                         def after_command(%OpenAccount{}), do: 5
+                         def after_command(%DepositMoney{}), do: 20
+                         def after_command(_), do: :infinity
+                       end
 
-          defmodule BankRouter do
-            use Commanded.Commands.Router
+                       defmodule BankRouter do
+                         use Commanded.Commands.Router
 
-            dispatch [OpenAccount],
-              to: BankAccount,
-              lifespan: BankAccountLifespan,
-              identity: :account_number
-          end
-        """
-      end
+                         dispatch [OpenAccount],
+                           to: BankAccount,
+                           lifespan: BankAccountLifespan,
+                           identity: :account_number
+                       end
+                     """)
+                   end
     end
   end
 end

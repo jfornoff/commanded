@@ -51,43 +51,39 @@ defmodule Commanded.Aggregate.Multi do
   alias Commanded.Aggregate.Multi
 
   @type t :: %__MODULE__{
-    aggregate: struct(),
-    executions: list(function()),
-  }
+          aggregate: struct(),
+          executions: list(function())
+        }
 
-  defstruct [
-    aggregate: nil,
-    executions: [],
-  ]
+  defstruct aggregate: nil,
+            executions: []
 
   @doc """
   Create a new `Commanded.Aggregate.Multi` struct.
   """
-  @spec new(aggregate :: struct()) :: Multi.t
+  @spec new(aggregate :: struct()) :: Multi.t()
   def new(aggregate), do: %Multi{aggregate: aggregate}
 
   @doc """
   Adds a command execute function to the multi.
   """
-  @spec execute(Multi.t, function()) :: Multi.t
+  @spec execute(Multi.t(), function()) :: Multi.t()
   def execute(%Multi{executions: executions} = multi, execute_fun)
-    when is_function(execute_fun)
-  do
-    %Multi{multi |
-      executions: [execute_fun | executions],
-    }
+      when is_function(execute_fun) do
+    %Multi{multi | executions: [execute_fun | executions]}
   end
 
   @doc """
   Run the execute functions contained within the multi, returning the updated
   aggregate state and any created events.
   """
-  @spec run(Multi.t) :: {aggregate :: struct(), list(event :: struct())} | {:error, reason :: any()}
+  @spec run(Multi.t()) ::
+          {aggregate :: struct(), list(event :: struct())} | {:error, reason :: any()}
   def run(%Multi{aggregate: aggregate, executions: executions}) do
     try do
       executions
       |> Enum.reverse()
-      |> Enum.reduce({aggregate, []}, fn (execute_fun, {aggregate, events}) ->
+      |> Enum.reduce({aggregate, []}, fn execute_fun, {aggregate, events} ->
         pending_events =
           case execute_fun.(aggregate) do
             {:error, _reason} = error -> throw(error)

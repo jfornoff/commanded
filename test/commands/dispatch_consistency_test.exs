@@ -11,12 +11,14 @@ defmodule Commanded.Commands.DispatchConsistencyTest do
     StronglyConsistentEventHandler,
     StronglyConsistentProcessManager
   }
+
   alias Commanded.EventStore
   alias Commanded.Helpers.ProcessHelper
+
   alias ConsistencyAggregateRoot.{
     ConsistencyCommand,
     NoOpCommand,
-    RequestDispatchCommand,
+    RequestDispatchCommand
   }
 
   describe "event handlers" do
@@ -30,7 +32,9 @@ defmodule Commanded.Commands.DispatchConsistencyTest do
     # default consistency timeout set to 100ms test config
     test "should timeout waiting for strongly consistent event handler to handle event" do
       command = %ConsistencyCommand{uuid: UUID.uuid4(), delay: 5_000}
-      assert {:error, :consistency_timeout} = ConsistencyRouter.dispatch(command, consistency: :strong)
+
+      assert {:error, :consistency_timeout} =
+               ConsistencyRouter.dispatch(command, consistency: :strong)
     end
 
     test "should not wait when command creates no events" do
@@ -45,7 +49,9 @@ defmodule Commanded.Commands.DispatchConsistencyTest do
 
     test "should timeout waiting for strongly consistent handler dispatching a command" do
       command = %RequestDispatchCommand{uuid: UUID.uuid4(), delay: 5_000}
-      assert {:error, :consistency_timeout} = ConsistencyRouter.dispatch(command, consistency: :strong)
+
+      assert {:error, :consistency_timeout} =
+               ConsistencyRouter.dispatch(command, consistency: :strong)
     end
   end
 
@@ -82,8 +88,12 @@ defmodule Commanded.Commands.DispatchConsistencyTest do
       uuid = UUID.uuid4()
       command = %ConsistencyCommand{uuid: uuid, delay: 0}
 
-      assert {:ok, %ExecutionResult{aggregate_uuid: aggregate_uuid}}
-        = ConsistencyPrefixRouter.dispatch(command, consistency: :strong, include_execution_result: true)
+      assert {:ok, %ExecutionResult{aggregate_uuid: aggregate_uuid}} =
+               ConsistencyPrefixRouter.dispatch(
+                 command,
+                 consistency: :strong,
+                 include_execution_result: true
+               )
 
       assert aggregate_uuid == "example-prefix-" <> uuid
 
@@ -106,10 +116,10 @@ defmodule Commanded.Commands.DispatchConsistencyTest do
     {:ok, handler1} = StronglyConsistentEventHandler.start_link()
     {:ok, handler2} = EventuallyConsistentEventHandler.start_link()
 
-    on_exit fn ->
+    on_exit(fn ->
       ProcessHelper.shutdown(handler1)
       ProcessHelper.shutdown(handler2)
-    end
+    end)
 
     :ok
   end
@@ -117,9 +127,9 @@ defmodule Commanded.Commands.DispatchConsistencyTest do
   def start_optional_handler(_context) do
     {:ok, handler3} = OptionalStronglyConsistentEventHandler.start_link()
 
-    on_exit fn ->
+    on_exit(fn ->
       ProcessHelper.shutdown(handler3)
-    end
+    end)
 
     :ok
   end
@@ -127,9 +137,9 @@ defmodule Commanded.Commands.DispatchConsistencyTest do
   def start_process_manager(_context) do
     {:ok, pm} = StronglyConsistentProcessManager.start_link()
 
-    on_exit fn ->
+    on_exit(fn ->
       ProcessHelper.shutdown(pm)
-    end
+    end)
 
     :ok
   end

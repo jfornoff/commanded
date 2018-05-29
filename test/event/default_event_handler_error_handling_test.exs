@@ -9,9 +9,9 @@ defmodule Commanded.Event.DefaultEventHandlerErrorHandlingTest do
   setup do
     {:ok, pid} = CommandAuditMiddleware.start_link()
 
-    on_exit fn ->
+    on_exit(fn ->
       ProcessHelper.shutdown(pid)
-    end
+    end)
 
     :ok
   end
@@ -24,7 +24,8 @@ defmodule Commanded.Event.DefaultEventHandlerErrorHandlingTest do
     Process.unlink(handler)
     ref = Process.monitor(handler)
 
-    :ok = BankRouter.dispatch(%OpenAccount{account_number: account_number, initial_balance: 1_000})
+    :ok =
+      BankRouter.dispatch(%OpenAccount{account_number: account_number, initial_balance: 1_000})
 
     assert_receive {:DOWN, ^ref, _, _, _}
     refute Process.alive?(handler)

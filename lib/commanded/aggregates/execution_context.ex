@@ -42,6 +42,6 @@ defmodule Commanded.Aggregates.ExecutionContext do
     :function,
     :handler,
     lifespan: DefaultLifespan,
-    metadata: %{},
+    metadata: %{}
   ]
 end

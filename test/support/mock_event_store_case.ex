@@ -6,7 +6,7 @@ defmodule Commanded.MockEventStoreCase do
   import Mox
 
   alias Commanded.EventStore.Adapters.Mock, as: MockEventStore
-  
+
   using do
     quote do
       import Mox

@@ -18,26 +18,34 @@ defmodule Commanded.Aggregates.BankRouter do
     WithdrawMoney
   }
 
-  dispatch OpenAccount,
+  dispatch(
+    OpenAccount,
     to: OpenAccountHandler,
     aggregate: BankAccount,
     lifespan: BankAccountLifespan,
     identity: :account_number
+  )
 
-  dispatch DepositMoney,
+  dispatch(
+    DepositMoney,
     to: DepositMoneyHandler,
     aggregate: BankAccount,
     lifespan: BankAccountLifespan,
     identity: :account_number
+  )
 
-  dispatch WithdrawMoney,
+  dispatch(
+    WithdrawMoney,
     to: WithdrawMoneyHandler,
     aggregate: BankAccount,
     identity: :account_number
+  )
 
-  dispatch CloseAccount,
+  dispatch(
+    CloseAccount,
     to: OpenAccountHandler,
     aggregate: BankAccount,
     lifespan: BankAccountLifespan,
     identity: :account_number
+  )
 end

@@ -8,24 +8,26 @@ defmodule Commanded.ExampleDomain.BankRouter do
     MoneyTransfer,
     OpenAccountHandler,
     TransferMoneyHandler,
-    WithdrawMoneyHandler,
+    WithdrawMoneyHandler
   }
+
   alias BankAccount.Commands.{
     DepositMoney,
     OpenAccount,
-    WithdrawMoney,
+    WithdrawMoney
   }
+
   alias MoneyTransfer.Commands.TransferMoney
   alias Commanded.Helpers.CommandAuditMiddleware
 
-  middleware CommandAuditMiddleware
+  middleware(CommandAuditMiddleware)
 
-  identify BankAccount, by: :account_number
-  identify MoneyTransfer, by: :transfer_uuid
+  identify(BankAccount, by: :account_number)
+  identify(MoneyTransfer, by: :transfer_uuid)
 
-  dispatch OpenAccount, to: OpenAccountHandler, aggregate: BankAccount
-  dispatch DepositMoney, to: DepositMoneyHandler, aggregate: BankAccount
-  dispatch WithdrawMoney, to: WithdrawMoneyHandler, aggregate: BankAccount
+  dispatch(OpenAccount, to: OpenAccountHandler, aggregate: BankAccount)
+  dispatch(DepositMoney, to: DepositMoneyHandler, aggregate: BankAccount)
+  dispatch(WithdrawMoney, to: WithdrawMoneyHandler, aggregate: BankAccount)
 
-  dispatch TransferMoney, to: TransferMoneyHandler, aggregate: MoneyTransfer
+  dispatch(TransferMoney, to: TransferMoneyHandler, aggregate: MoneyTransfer)
 end

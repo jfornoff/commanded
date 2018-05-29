@@ -3,23 +3,23 @@ defmodule Commanded.ProcessManagers.ResumeProcessManagerTest do
 
   import Commanded.Assertions.EventAssertions
 
-  alias Commanded.Helpers.{ProcessHelper,Wait}
-  alias Commanded.ProcessManagers.{ProcessRouter,ProcessManagerInstance}
-  alias Commanded.ProcessManagers.{ResumeRouter,ResumeProcessManager}
-  alias Commanded.ProcessManagers.ResumeAggregate.Commands.{StartProcess,ResumeProcess}
-  alias Commanded.ProcessManagers.ResumeAggregate.Events.{ProcessStarted,ProcessResumed}
+  alias Commanded.Helpers.{ProcessHelper, Wait}
+  alias Commanded.ProcessManagers.{ProcessRouter, ProcessManagerInstance}
+  alias Commanded.ProcessManagers.{ResumeRouter, ResumeProcessManager}
+  alias Commanded.ProcessManagers.ResumeAggregate.Commands.{StartProcess, ResumeProcess}
+  alias Commanded.ProcessManagers.ResumeAggregate.Events.{ProcessStarted, ProcessResumed}
 
   test "should resume a process manager with same state when process restarts" do
-    process_uuid = UUID.uuid4
+    process_uuid = UUID.uuid4()
 
     {:ok, process_router} = ResumeProcessManager.start_link()
 
     :ok = ResumeRouter.dispatch(%StartProcess{process_uuid: process_uuid, status: "start"})
 
-    assert_receive_event ProcessStarted, fn event ->
+    assert_receive_event(ProcessStarted, fn event ->
       assert event.process_uuid == process_uuid
       assert event.status == "start"
-    end
+    end)
 
     # wait for process instance to receive event
     Wait.until(fn ->

@@ -12,7 +12,7 @@ defmodule Commanded.Event.EventHandlerErrorHandlingTest do
     [
       handler: handler,
       ref: Process.monitor(handler),
-      uuid: UUID.uuid4(),
+      uuid: UUID.uuid4()
     ]
   end
 
@@ -25,7 +25,11 @@ defmodule Commanded.Event.EventHandlerErrorHandlingTest do
     refute Process.alive?(handler)
   end
 
-  test "should stop event handler when invalid error response returned", %{handler: handler, ref: ref, uuid: uuid} do
+  test "should stop event handler when invalid error response returned", %{
+    handler: handler,
+    ref: ref,
+    uuid: uuid
+  } do
     :ok = ErrorRouter.dispatch(%RaiseError{uuid: uuid, strategy: "invalid", reply_to: reply_to()})
 
     assert_receive {:error, :invalid}
@@ -45,8 +49,18 @@ defmodule Commanded.Event.EventHandlerErrorHandlingTest do
     refute Process.alive?(handler)
   end
 
-  test "should retry event handler after delay on error", %{handler: handler, ref: ref, uuid: uuid} do
-    :ok = ErrorRouter.dispatch(%RaiseError{uuid: uuid, strategy: "retry", delay: 10, reply_to: reply_to()})
+  test "should retry event handler after delay on error", %{
+    handler: handler,
+    ref: ref,
+    uuid: uuid
+  } do
+    :ok =
+      ErrorRouter.dispatch(%RaiseError{
+        uuid: uuid,
+        strategy: "retry",
+        delay: 10,
+        reply_to: reply_to()
+      })
 
     assert_receive {:error, :failed, %{failures: 1, delay: 10}}
     assert_receive {:error, :failed, %{failures: 2, delay: 10}}

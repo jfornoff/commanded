@@ -3,25 +3,35 @@ defmodule Commanded.ProcessManagers.ErrorAggregate do
   defstruct [:process_uuid]
 
   defmodule Commands do
-    defmodule StartProcess, do: defstruct [:process_uuid, :strategy, :delay, :reply_to]
-    defmodule AttemptProcess, do: defstruct [:process_uuid, :strategy, :delay, :reply_to]
-    defmodule ContinueProcess, do: defstruct [:process_uuid, :reply_to]
+    defmodule(StartProcess, do: defstruct([:process_uuid, :strategy, :delay, :reply_to]))
+    defmodule(AttemptProcess, do: defstruct([:process_uuid, :strategy, :delay, :reply_to]))
+    defmodule(ContinueProcess, do: defstruct([:process_uuid, :reply_to]))
   end
 
   defmodule Events do
-    defmodule ProcessStarted, do: defstruct [:process_uuid, :strategy, :delay, :reply_to]
-    defmodule ProcessContinued, do: defstruct [:process_uuid, :reply_to]
+    defmodule(ProcessStarted, do: defstruct([:process_uuid, :strategy, :delay, :reply_to]))
+    defmodule(ProcessContinued, do: defstruct([:process_uuid, :reply_to]))
   end
 
   alias Commanded.ProcessManagers.ErrorAggregate
-  alias Commands.{AttemptProcess,ContinueProcess,StartProcess}
-  alias Events.{ProcessContinued,ProcessStarted}
+  alias Commands.{AttemptProcess, ContinueProcess, StartProcess}
+  alias Events.{ProcessContinued, ProcessStarted}
 
   def execute(
-    %ErrorAggregate{},
-    %StartProcess{process_uuid: process_uuid, strategy: strategy, delay: delay, reply_to: reply_to})
-  do
-    %ProcessStarted{process_uuid: process_uuid, strategy: strategy, delay: delay, reply_to: reply_to}
+        %ErrorAggregate{},
+        %StartProcess{
+          process_uuid: process_uuid,
+          strategy: strategy,
+          delay: delay,
+          reply_to: reply_to
+        }
+      ) do
+    %ProcessStarted{
+      process_uuid: process_uuid,
+      strategy: strategy,
+      delay: delay,
+      reply_to: reply_to
+    }
   end
 
   def execute(%ErrorAggregate{}, %AttemptProcess{}),

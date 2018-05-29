@@ -32,7 +32,7 @@ defmodule Commanded.Middleware.ConsistencyGuarantee do
     } = assigns
 
     opts = [consistency: consistency, exclude: dispatcher_pid]
-    
+
     case Subscriptions.wait_for(aggregate_uuid, aggregate_version, opts) do
       :ok ->
         pipeline

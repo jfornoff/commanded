@@ -11,9 +11,13 @@ defmodule Commanded.Event.ErrorEventHandler do
     {:error, :failed}
   end
 
-  def error({:error, :failed}, %ErrorEvent{strategy: "retry", delay: delay} = event, %FailureContext{
-        context: context
-      }) do
+  def error(
+        {:error, :failed},
+        %ErrorEvent{strategy: "retry", delay: delay} = event,
+        %FailureContext{
+          context: context
+        }
+      ) do
     context = context |> record_failure() |> Map.put(:delay, delay)
 
     case Map.get(context, :failures) do

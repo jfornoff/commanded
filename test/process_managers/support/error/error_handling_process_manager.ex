@@ -3,15 +3,17 @@ defmodule Commanded.ProcessManagers.ErrorHandlingProcessManager do
 
   alias Commanded.ProcessManagers.{
     ErrorHandlingProcessManager,
-    ErrorRouter,
+    ErrorRouter
   }
+
   alias Commanded.ProcessManagers.ErrorAggregate.Commands.{
     AttemptProcess,
-    ContinueProcess,
+    ContinueProcess
   }
+
   alias Commanded.ProcessManagers.ErrorAggregate.Events.{
     ProcessContinued,
-    ProcessStarted,
+    ProcessStarted
   }
 
   use Commanded.ProcessManagers.ProcessManager,
@@ -24,9 +26,9 @@ defmodule Commanded.ProcessManagers.ErrorHandlingProcessManager do
   def interested?(%ProcessContinued{process_uuid: process_uuid}), do: {:continue, process_uuid}
 
   def handle(
-    %ErrorHandlingProcessManager{},
-    %ProcessStarted{process_uuid: process_uuid, strategy: strategy, delay: delay})
-  do
+        %ErrorHandlingProcessManager{},
+        %ProcessStarted{process_uuid: process_uuid, strategy: strategy, delay: delay}
+      ) do
     %AttemptProcess{process_uuid: process_uuid, strategy: strategy, delay: delay}
   end
 
@@ -36,9 +38,12 @@ defmodule Commanded.ProcessManagers.ErrorHandlingProcessManager do
   end
 
   # stop after three attempts
-  def error({:error, :failed}, %AttemptProcess{strategy: "retry"}, %{context: %{attempts: attempts}} = failure_context)
-    when attempts >= 2
-  do
+  def error(
+        {:error, :failed},
+        %AttemptProcess{strategy: "retry"},
+        %{context: %{attempts: attempts}} = failure_context
+      )
+      when attempts >= 2 do
     reply({:error, :too_many_attempts, record_attempt(failure_context.context)})
 
     {:stop, :too_many_attempts}
@@ -46,8 +51,7 @@ defmodule Commanded.ProcessManagers.ErrorHandlingProcessManager do
 
   # retry command with delay
   def error({:error, :failed}, %AttemptProcess{strategy: "retry", delay: delay}, failure_context)
-    when is_integer(delay)
-  do
+      when is_integer(delay) do
     context = record_attempt(failure_context.context)
     reply_failure(Map.put(context, :delay, delay))
 
@@ -70,7 +74,11 @@ defmodule Commanded.ProcessManagers.ErrorHandlingProcessManager do
   end
 
   # continue with modified command
-  def error({:error, :failed}, %AttemptProcess{strategy: "continue", process_uuid: process_uuid}, failure_context) do
+  def error(
+        {:error, :failed},
+        %AttemptProcess{strategy: "continue", process_uuid: process_uuid},
+        failure_context
+      ) do
     context = record_attempt(failure_context.context)
     reply({:error, :failed, context})
 

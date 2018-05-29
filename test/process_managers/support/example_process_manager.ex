@@ -1,17 +1,15 @@
 defmodule Commanded.ProcessManagers.ExampleProcessManager do
   @moduledoc false
-  alias Commanded.ProcessManagers.{ExampleProcessManager,ExampleRouter}
+  alias Commanded.ProcessManagers.{ExampleProcessManager, ExampleRouter}
   alias Commanded.ProcessManagers.ExampleAggregate.Commands.Stop
-  alias Commanded.ProcessManagers.ExampleAggregate.Events.{Errored,Started,Interested,Stopped}
+  alias Commanded.ProcessManagers.ExampleAggregate.Events.{Errored, Started, Interested, Stopped}
 
   use Commanded.ProcessManagers.ProcessManager,
     name: "ExampleProcessManager",
     router: ExampleRouter
 
-  defstruct [
-    status: nil,
-    items: [],
-  ]
+  defstruct status: nil,
+            items: []
 
   def interested?(%Started{aggregate_uuid: aggregate_uuid}), do: {:start, aggregate_uuid}
   def interested?(%Interested{aggregate_uuid: aggregate_uuid}), do: {:continue, aggregate_uuid}
@@ -27,14 +25,10 @@ defmodule Commanded.ProcessManagers.ExampleProcessManager do
   ## state mutators
 
   def apply(%ExampleProcessManager{} = process_manager, %Started{}) do
-    %ExampleProcessManager{process_manager |
-      status: :started
-    }
+    %ExampleProcessManager{process_manager | status: :started}
   end
 
   def apply(%ExampleProcessManager{items: items} = process_manager, %Interested{index: index}) do
-    %ExampleProcessManager{process_manager |
-      items: items ++ [index]
-    }
+    %ExampleProcessManager{process_manager | items: items ++ [index]}
   end
 end

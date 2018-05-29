@@ -8,7 +8,9 @@ defmodule Commanded.Aggregates.AggregateConcurrencyTest do
   alias Commanded.ExampleDomain.BankAccount.Events.MoneyDeposited
 
   setup do
-    expect(MockEventStore, :subscribe_to_all_streams, fn _handler_name, handler, _subscribe_from ->
+    expect(MockEventStore, :subscribe_to_all_streams, fn _handler_name,
+                                                         handler,
+                                                         _subscribe_from ->
       {:ok, handler}
     end)
 

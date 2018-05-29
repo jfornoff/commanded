@@ -6,11 +6,13 @@ defmodule Commanded.Commands.IdentityAggregatePrefixFunRouter do
   alias Commanded.Commands.IdentityAggregate
   alias Commanded.Commands.IdentityAggregate.IdentityCommand
 
-  identify IdentityAggregate,
+  identify(
+    IdentityAggregate,
     by: :uuid,
     prefix: &IdentityAggregatePrefixFunRouter.prefix/0
+  )
 
-  dispatch IdentityCommand, to: IdentityAggregate
+  dispatch(IdentityCommand, to: IdentityAggregate)
 
   def prefix do
     "funprefix-"

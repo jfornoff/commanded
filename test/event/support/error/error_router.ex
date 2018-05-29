@@ -6,5 +6,5 @@ defmodule Commanded.Event.ErrorRouter do
   alias Commanded.Event.ErrorAggregate
   alias Commanded.Event.ErrorAggregate.Commands.RaiseError
 
-  dispatch [RaiseError], to: ErrorAggregate, identity: :uuid
+  dispatch([RaiseError], to: ErrorAggregate, identity: :uuid)
 end

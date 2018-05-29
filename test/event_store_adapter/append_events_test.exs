@@ -6,7 +6,7 @@ defmodule Commanded.EventStore.Adapter.AppendEventsTest do
   alias Commanded.EventStore
   alias Commanded.EventStore.EventData
 
-  defmodule BankAccountOpened, do: defstruct [:account_number, :initial_balance]
+  defmodule(BankAccountOpened, do: defstruct([:account_number, :initial_balance]))
 
   describe "append events to a stream" do
     test "should append events" do
@@ -24,7 +24,8 @@ defmodule Commanded.EventStore.Adapter.AppendEventsTest do
     test "should fail to append to a stream because of wrong expected version" do
       assert {:ok, 2} == EventStore.append_to_stream("stream", 0, build_events(2))
 
-      assert {:error, :wrong_expected_version} == EventStore.append_to_stream("stream", 1, build_events(1))
+      assert {:error, :wrong_expected_version} ==
+               EventStore.append_to_stream("stream", 1, build_events(1))
     end
   end
 
@@ -48,7 +49,7 @@ defmodule Commanded.EventStore.Adapter.AppendEventsTest do
       assert pluck(read_events, :stream_version) == [1, 2, 3, 4]
 
       Enum.each(read_events, fn event ->
-        assert_is_uuid event.event_id
+        assert_is_uuid(event.event_id)
         assert event.stream_id == "stream"
         assert event.correlation_id == correlation_id
         assert event.causation_id == causation_id
@@ -95,11 +96,12 @@ defmodule Commanded.EventStore.Adapter.AppendEventsTest do
       causation_id: causation_id,
       event_type: "Elixir.Commanded.EventStore.Adapter.AppendEventsTest.BankAccountOpened",
       data: %BankAccountOpened{account_number: account_number, initial_balance: 1_000},
-      metadata: %{"metadata" => "value"},
+      metadata: %{"metadata" => "value"}
     }
   end
 
   defp build_events(count, correlation_id \\ UUID.uuid4(), causation_id \\ UUID.uuid4())
+
   defp build_events(count, correlation_id, causation_id) do
     for account_number <- 1..count, do: build_event(account_number, correlation_id, causation_id)
   end
@@ -108,5 +110,15 @@ defmodule Commanded.EventStore.Adapter.AppendEventsTest do
     assert uuid |> UUID.string_to_binary!() |> is_binary()
   end
 
-  defp coerce(events), do: Enum.map(events, &(%{causation_id: &1.causation_id, correlation_id: &1.correlation_id, data: &1.data, metadata: &1.metadata}))
+  defp coerce(events),
+    do:
+      Enum.map(
+        events,
+        &%{
+          causation_id: &1.causation_id,
+          correlation_id: &1.correlation_id,
+          data: &1.data,
+          metadata: &1.metadata
+        }
+      )
 end

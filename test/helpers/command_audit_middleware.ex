@@ -6,11 +6,9 @@ defmodule Commanded.Helpers.CommandAuditMiddleware do
 
   defmodule AuditLog do
     @moduledoc false
-    defstruct [
-      dispatched: [],
-      succeeded: [],
-      failed: [],
-    ]
+    defstruct dispatched: [],
+              succeeded: [],
+              failed: []
   end
 
   def start_link do
@@ -49,7 +47,11 @@ defmodule Commanded.Helpers.CommandAuditMiddleware do
   Get the counts of the dispatched, succeeded, and failed commands
   """
   def count_commands do
-    Agent.get(@agent_name, fn %AuditLog{dispatched: dispatched, succeeded: succeeded, failed: failed} ->
+    Agent.get(@agent_name, fn %AuditLog{
+                                dispatched: dispatched,
+                                succeeded: succeeded,
+                                failed: failed
+                              } ->
       {length(dispatched), length(succeeded), length(failed)}
     end)
   end
@@ -57,7 +59,7 @@ defmodule Commanded.Helpers.CommandAuditMiddleware do
   @doc """
   Access the dispatched commands the middleware received
   """
-  def dispatched_commands(pluck \\ &(&1.command)) do
+  def dispatched_commands(pluck \\ & &1.command) do
     Agent.get(@agent_name, fn %AuditLog{dispatched: dispatched} ->
       dispatched |> Enum.map(pluck)
     end)
@@ -68,8 +70,8 @@ defmodule Commanded.Helpers.CommandAuditMiddleware do
   """
   def succeeded_commands do
     Agent.get(@agent_name, fn %AuditLog{succeeded: succeeded} ->
-      succeeded |> Enum.map(&(&1.command))
-     end)
+      succeeded |> Enum.map(& &1.command)
+    end)
   end
 
   @doc """
@@ -77,7 +79,7 @@ defmodule Commanded.Helpers.CommandAuditMiddleware do
   """
   def failed_commands do
     Agent.get(@agent_name, fn %AuditLog{failed: failed} ->
-      failed |> Enum.map(&(&1.command))
+      failed |> Enum.map(& &1.command)
     end)
   end
 end

@@ -3,7 +3,7 @@ defmodule Commanded.Helpers.Commands do
 
   defmodule IncrementCount do
     @moduledoc false
-    defstruct [aggregate_uuid: nil, by: 1]
+    defstruct aggregate_uuid: nil, by: 1
   end
 
   defmodule Fail do
@@ -33,11 +33,10 @@ defmodule Commanded.Helpers.Commands do
 
   defmodule CounterAggregateRoot do
     @moduledoc false
-    defstruct [count: 0]
+    defstruct count: 0
 
     def increment(%CounterAggregateRoot{count: count}, increment_by)
-      when is_integer(increment_by)
-    do
+        when is_integer(increment_by) do
       %CountIncremented{count: count + increment_by}
     end
 
@@ -63,7 +62,7 @@ defmodule Commanded.Helpers.Commands do
     end
 
     def handle(%CounterAggregateRoot{}, %Timeout{}) do
-      :timer.sleep 1_000
+      :timer.sleep(1_000)
       []
     end
 

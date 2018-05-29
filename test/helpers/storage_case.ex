@@ -10,10 +10,10 @@ defmodule Commanded.StorageCase do
 
     {:ok, _} = Application.ensure_all_started(:commanded)
 
-    on_exit fn ->
+    on_exit(fn ->
       :ok = Application.stop(:commanded)
       :ok = run_storage(:stop_storage)
-    end
+    end)
 
     :ok
   end

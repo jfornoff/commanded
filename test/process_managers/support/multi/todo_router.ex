@@ -7,9 +7,9 @@ defmodule Commanded.ProcessManagers.TodoRouter do
   alias Commanded.ProcessManagers.Todo.Commands.{CreateTodo, MarkDone}
   alias Commanded.ProcessManagers.TodoList.Commands.{CreateList, MarkAllDone}
 
-  identify Todo, by: :todo_uuid
-  identify TodoList, by: :list_uuid
+  identify(Todo, by: :todo_uuid)
+  identify(TodoList, by: :list_uuid)
 
-  dispatch [CreateTodo, MarkDone], to: Todo
-  dispatch [CreateList, MarkAllDone], to: TodoList
+  dispatch([CreateTodo, MarkDone], to: Todo)
+  dispatch([CreateList, MarkAllDone], to: TodoList)
 end

@@ -3,15 +3,17 @@ defmodule Commanded.ProcessManager.ProcessManagerErrorHandlingStateTest do
 
   alias Commanded.ProcessManagers.{
     StateErrorHandlingProcessManager,
-    ErrorRouter,
+    ErrorRouter
   }
+
   alias Commanded.ProcessManagers.ErrorAggregate.Commands.StartProcess
 
   test "should receive the aggregate state in the context" do
     process_uuid = UUID.uuid4()
+
     command = %StartProcess{
       process_uuid: process_uuid,
-      reply_to: reply_to(),
+      reply_to: reply_to()
     }
 
     {:ok, _process_router} = StateErrorHandlingProcessManager.start_link()

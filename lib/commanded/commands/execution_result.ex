@@ -15,16 +15,14 @@ defmodule Commanded.Commands.ExecutionResult do
   """
 
   @type t :: %__MODULE__{
-    aggregate_uuid: String.t,
-    aggregate_version: non_neg_integer(),
-    events: list(struct()),
-    metadata: struct(),
-  }
+          aggregate_uuid: String.t(),
+          aggregate_version: non_neg_integer(),
+          events: list(struct()),
+          metadata: struct()
+        }
 
-  defstruct [
-    aggregate_uuid: nil,
-    aggregate_version: nil,
-    events: nil,
-    metadata: nil,
-  ]
+  defstruct aggregate_uuid: nil,
+            aggregate_version: nil,
+            events: nil,
+            metadata: nil
 end

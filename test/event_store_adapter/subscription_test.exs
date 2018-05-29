@@ -64,20 +64,20 @@ defmodule Commanded.EventStore.Adapter.SubscriptionTest do
       {:ok, 1} = EventStore.append_to_stream(stream_uuid, 0, build_events(1))
 
       received_events = assert_receive_events(1, from: 1)
-      assert Enum.map(received_events, &(&1.stream_id)) == [stream_uuid]
-      assert Enum.map(received_events, &(&1.stream_version)) == [1]
+      assert Enum.map(received_events, & &1.stream_id) == [stream_uuid]
+      assert Enum.map(received_events, & &1.stream_version) == [1]
 
       {:ok, 3} = EventStore.append_to_stream(stream_uuid, 1, build_events(2))
 
       received_events = assert_receive_events(2, from: 2)
-      assert Enum.map(received_events, &(&1.stream_id)) == [stream_uuid, stream_uuid]
-      assert Enum.map(received_events, &(&1.stream_version)) == [2, 3]
+      assert Enum.map(received_events, & &1.stream_id) == [stream_uuid, stream_uuid]
+      assert Enum.map(received_events, & &1.stream_version) == [2, 3]
 
       {:ok, 6} = EventStore.append_to_stream(stream_uuid, 3, build_events(3))
 
       received_events = assert_receive_events(3, from: 4)
-      assert Enum.map(received_events, &(&1.stream_id)) == [stream_uuid, stream_uuid, stream_uuid]
-      assert Enum.map(received_events, &(&1.stream_version)) == [4, 5, 6]
+      assert Enum.map(received_events, & &1.stream_id) == [stream_uuid, stream_uuid, stream_uuid]
+      assert Enum.map(received_events, & &1.stream_version) == [4, 5, 6]
 
       refute_receive {:events, _received_events}
     end

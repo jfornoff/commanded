@@ -5,9 +5,11 @@ defmodule Commanded.Commands.IdentityAggregateRouter do
   alias Commanded.Commands.IdentityAggregate
   alias Commanded.Commands.IdentityAggregate.IdentityCommand
 
-  identify IdentityAggregate,
+  identify(
+    IdentityAggregate,
     by: :uuid,
     prefix: "prefix-"
+  )
 
-  dispatch IdentityCommand, to: IdentityAggregate
+  dispatch(IdentityCommand, to: IdentityAggregate)
 end

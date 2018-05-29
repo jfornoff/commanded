@@ -5,16 +5,18 @@ defmodule Commanded.Commands.EventuallyConsistentEventHandler do
 
   alias Commanded.Commands.{
     ConsistencyAggregateRoot,
-    ConsistencyRouter,
+    ConsistencyRouter
   }
+
   alias ConsistencyAggregateRoot.{
     ConsistencyCommand,
     ConsistencyEvent,
-    DispatchRequestedEvent,
+    DispatchRequestedEvent
   }
 
   def handle(%ConsistencyEvent{}, _metadata) do
-    :timer.sleep(:infinity) # simulate slow event handler
+    # simulate slow event handler
+    :timer.sleep(:infinity)
     :ok
   end
 

@@ -6,31 +6,41 @@ defmodule Commanded.EventStore do
   alias Commanded.EventStore.{
     EventData,
     RecordedEvent,
-    SnapshotData,
+    SnapshotData
   }
 
-  @type stream_uuid :: String.t
+  @type stream_uuid :: String.t()
   @type start_from :: :origin | :current | integer
   @type stream_version :: integer
-  @type subscription_name :: String.t
-  @type source_uuid :: String.t
-  @type snapshot :: SnapshotData.t
+  @type subscription_name :: String.t()
+  @type source_uuid :: String.t()
+  @type snapshot :: SnapshotData.t()
   @type reason :: term
 
   @doc """
   Append one or more events to a stream atomically.
   """
-  @callback append_to_stream(stream_uuid, expected_version :: non_neg_integer, events :: list(EventData.t)) :: {:ok, stream_version}
-    | {:error, :wrong_expected_version}
-    | {:error, reason}
+  @callback append_to_stream(
+              stream_uuid,
+              expected_version :: non_neg_integer,
+              events :: list(EventData.t())
+            ) ::
+              {:ok, stream_version}
+              | {:error, :wrong_expected_version}
+              | {:error, reason}
 
   @doc """
   Streams events from the given stream, in the order in which they were
   originally written.
   """
-  @callback stream_forward(stream_uuid, start_version :: non_neg_integer, read_batch_size :: non_neg_integer) :: Enumerable.t
-    | {:error, :stream_not_found}
-    | {:error, reason}
+  @callback stream_forward(
+              stream_uuid,
+              start_version :: non_neg_integer,
+              read_batch_size :: non_neg_integer
+            ) ::
+              Enumerable.t()
+              | {:error, :stream_not_found}
+              | {:error, reason}
 
   @doc """
   Create a transient subscription to a single event stream.
@@ -60,15 +70,16 @@ defmodule Commanded.EventStore do
   The subscriber must ack each received, and successfully processed event, using
   `Commanded.EventStore.ack_event/2`.
   """
-  @callback subscribe_to_all_streams(subscription_name, subscriber :: pid, start_from) :: {:ok, subscription :: pid}
-    | {:error, :subscription_already_exists}
-    | {:error, reason}
+  @callback subscribe_to_all_streams(subscription_name, subscriber :: pid, start_from) ::
+              {:ok, subscription :: pid}
+              | {:error, :subscription_already_exists}
+              | {:error, reason}
 
   @doc """
   Acknowledge receipt and successful processing of the given event received from
   a subscription to an event stream.
   """
-  @callback ack_event(pid, RecordedEvent.t) :: :ok
+  @callback ack_event(pid, RecordedEvent.t()) :: :ok
 
   @doc """
   Unsubscribe an existing subscriber from all event notifications.
@@ -93,7 +104,11 @@ defmodule Commanded.EventStore do
   @doc """
   Append one or more events to a stream atomically.
   """
-  @spec append_to_stream(stream_uuid, expected_version :: non_neg_integer, events :: list(EventData.t)) :: {:ok, stream_version} | {:error, :wrong_expected_version} | {:error, reason}
+  @spec append_to_stream(
+          stream_uuid,
+          expected_version :: non_neg_integer,
+          events :: list(EventData.t())
+        ) :: {:ok, stream_version} | {:error, :wrong_expected_version} | {:error, reason}
   def append_to_stream(stream_uuid, expected_version, events) do
     event_store_adapter().append_to_stream(stream_uuid, expected_version, events)
   end
@@ -102,8 +117,13 @@ defmodule Commanded.EventStore do
   Streams events from the given stream, in the order in which they were
   originally written.
   """
-  @spec stream_forward(stream_uuid, start_version :: non_neg_integer, read_batch_size :: non_neg_integer) :: Enumerable.t | {:error, :stream_not_found} | {:error, reason}
+  @spec stream_forward(
+          stream_uuid,
+          start_version :: non_neg_integer,
+          read_batch_size :: non_neg_integer
+        ) :: Enumerable.t() | {:error, :stream_not_found} | {:error, reason}
   def stream_forward(stream_uuid, start_version \\ 0, read_batch_size \\ 1_000)
+
   def stream_forward(stream_uuid, start_version, read_batch_size) do
     event_store_adapter().stream_forward(stream_uuid, start_version, read_batch_size)
   end
@@ -119,9 +139,10 @@ defmodule Commanded.EventStore do
   @doc """
   Create a persistent subscription to all event streams.
   """
-  @spec subscribe_to_all_streams(subscription_name, subscriber :: pid, start_from) :: {:ok, subscription :: pid}
-    | {:error, :subscription_already_exists}
-    | {:error, reason}
+  @spec subscribe_to_all_streams(subscription_name, subscriber :: pid, start_from) ::
+          {:ok, subscription :: pid}
+          | {:error, :subscription_already_exists}
+          | {:error, reason}
   def subscribe_to_all_streams(subscription_name, subscriber, start_from) do
     event_store_adapter().subscribe_to_all_streams(subscription_name, subscriber, start_from)
   end
@@ -130,7 +151,7 @@ defmodule Commanded.EventStore do
   Acknowledge receipt and successful processing of the given event received from
   a subscription to an event stream.
   """
-  @spec ack_event(pid, RecordedEvent.t) :: :ok
+  @spec ack_event(pid, RecordedEvent.t()) :: :ok
   def ack_event(pid, event) do
     event_store_adapter().ack_event(pid, event)
   end
@@ -172,6 +193,7 @@ defmodule Commanded.EventStore do
   """
   def event_store_adapter do
     Application.get_env(:commanded, :event_store_adapter) ||
-      raise ArgumentError, "Commanded expects `:event_store_adapter` to be configured in environment"
+      raise ArgumentError,
+            "Commanded expects `:event_store_adapter` to be configured in environment"
   end
 end

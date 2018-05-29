@@ -17,11 +17,13 @@ defmodule Commanded.Serialization.JsonSerializer do
   Deserialize given JSON binary data to the expected type.
   """
   def deserialize(binary, config \\ [])
+
   def deserialize(binary, config) do
-    type = case Keyword.get(config, :type) do
-      nil -> nil
-      type -> TypeProvider.to_struct(type)
-    end
+    type =
+      case Keyword.get(config, :type) do
+        nil -> nil
+        type -> TypeProvider.to_struct(type)
+      end
 
     binary
     |> Poison.decode!(as: type)

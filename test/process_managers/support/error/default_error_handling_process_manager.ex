@@ -3,13 +3,15 @@ defmodule Commanded.ProcessManagers.DefaultErrorHandlingProcessManager do
 
   alias Commanded.ProcessManagers.{
     DefaultErrorHandlingProcessManager,
-    ExampleRouter,
+    ExampleRouter
   }
+
   alias Commanded.ProcessManagers.ErrorAggregate.Commands.{
-    AttemptProcess,
+    AttemptProcess
   }
+
   alias Commanded.ProcessManagers.ErrorAggregate.Events.{
-    ProcessStarted,
+    ProcessStarted
   }
 
   use Commanded.ProcessManagers.ProcessManager,
